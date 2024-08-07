@@ -1,29 +1,29 @@
 /* Set background color and text color for all elements except pre, span and code inside pre, and textarea */
-*:not(pre):not(pre span):not(pre code):not(textarea) {
+html.dark-mode *:not(pre):not(pre span):not(pre code):not(textarea) {
   background-color: #070F2B !important;
   color: #9290C3 !important;
 }
 
-.navbar.navbar-dark.navbar-inverse.bg-primary.navbar-expand-sm,
-.navbar.navbar-dark.navbar-inverse.bg-primary.navbar-expand-sm > *{
+html.dark-mode .navbar.navbar-dark.navbar-inverse.bg-primary.navbar-expand-sm,
+html.dark-mode .navbar.navbar-dark.navbar-inverse.bg-primary.navbar-expand-sm > *{
   background-color: #04091A !important;
   color: #9290C3 !important;
 }
 	
-textarea {
+html.dark-mode textarea {
   background-color: #535C91 !important;
 }
 
-::-webkit-scrollbar {
+html.dark-mode ::-webkit-scrollbar {
   background: #1B1A55 !important;
 }
 
 /* color of the scrollbar handle */
-::-webkit-scrollbar-thumb {
+html.dark-mode ::-webkit-scrollbar-thumb {
   background: #535C91 !important; 
 }
 
 /* Color of the scrollbar handle on hover */
-::-webkit-scrollbar-thumb:hover {
+html.dark-mode ::-webkit-scrollbar-thumb:hover {
   background: #9290C3 !important;
 }
