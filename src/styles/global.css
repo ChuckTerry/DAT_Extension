@@ -1,0 +1,59 @@
+:root {
+    --black: rgb(1, 1, 1);
+    --key-background: rgb(248, 249, 252);
+    --primary: rgb(32, 136, 247);
+    --primary-hover: rgb(52, 152, 219);
+    --success: rgb(76, 177, 37);
+    --success-hover: rgb(88, 214, 37);
+    --warning: rgb(196, 54, 54);
+    --warning-hover: rgb(238, 122, 122);
+    --white: rgb(254, 254, 254);
+}
+
+pre {
+    box-shadow: none;
+    transform: scale(1);
+    transition: transform 0.2s ease, box-shadow 0s ease;
+
+    &.glow {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        transform: scale(1.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+}
+
+#tooltip {
+    position: fixed;
+    background-color: #333;
+    color: var(--white);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.hidden {
+    display: none;
+}
+
+.keyboard-key {
+    background-color: var(--key-background);
+    background-image: linear-gradient(to bottom, #EAECF1, var(--key-background), #E8EAEC);
+    border: 2px double #666666;
+    border-bottom: 3px double #555555;
+    border-radius: 0.2em;
+    border-top: 1px solid #888888;
+    box-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.1);
+    font-size: 1.25em;
+    padding: 0.15em 0.34em;
+}
+
+body.dark-mode {
+    .keyboard-key {
+        background-color: #515256;
+        background-image: linear-gradient(to bottom, #1D1D1E, #515256, #1D1D1E);
+        border: 2px double #959393;
+        border-bottom: 3px double #979696;
+        border-top: 1px solid #D4D4D4;
+        color: #EAEAEA;
+    }
+}
