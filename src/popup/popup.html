@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Extension Preferences</title>
+		<link rel="stylesheet" href="popup.css">
+		<link rel="stylesheet" href="../styles/global.css">
+	</head>
+	<body>
+		<div class="container">
+			<button id="move">Rules</button>
+			<div class="inner-container">
+				<div class="timer">
+					<p id="display">00:00:00</p>
+					<div class="timer-control">
+						<button class="button button-lg button-success " id="toggle-button">Start</button>
+						<button class="button button-lg button-warning" id="reset-button">Reset</button>
+					</div>
+				</div>
+				<div class="image-concat">
+					<h2>Concatenate Images</h2>
+					<button class=" button image-button">
+						<svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M6.205 3h11.59c1.114 0 1.519.116 1.926.334.407.218.727.538.945.945.218.407.334.811.334 
+							1.926v7.51l-4.391-4.053a1.5 1.5 0 0 0-2.265.27l-3.13 4.695-2.303-1.48a1.5 1.5 
+							0 0 0-1.96.298L3.005 18.15A12.98 12.98 0 0 1 3 17.795V6.205c0-1.115.116-1.519.334-1.926.218-.407.538-.727.945-.945C4.686 3.116 
+							5.09 3 6.205 3zm9.477 8.53L21 16.437v1.357c0 1.114-.116 1.519-.334 1.926a2.272 2.272 0 0 1-.945.945c-.407.218-.811.334-1.926.334H6.205c-1.115 
+							0-1.519-.116-1.926-.334a2.305 2.305 0 0 1-.485-.345L8.2 15.067l2.346 1.508a1.5 1.5 0 0 0 2.059-.43l3.077-4.616zM7.988 6C6.878 6 6 6.832 6 7.988 
+							6 9.145 6.879 10 7.988 10 9.121 10 10 9.145 10 7.988 10 6.832 9.121 6 7.988 6z" fill="#FFFFFF"/>
+						</svg>
+						Upload Images
+						<input class="file" type="file" name="image" id="image-input" multiple accept="image/*">
+					</button>
+					<div id="image-container"></div>
+					<button class="button button-success hidden" id="concatenate-button">Concatenate</button>
+					<canvas id="output-canvas" style="display: none;"></canvas>
+					<div id="loading-spinner" style="display: none;">
+						<img src="../images/spin-128.gif" alt="Loading...">
+					</div>
+				</div>
+				<form class="input-container">
+					<h2>Preferences</h2>
+					<div class="formgroup row">
+						<div class="col">
+							<label for="shortcut">
+								Skip Task Shortcut
+								<button class=" button-warning" type="button" id="reset-shortcut">&#11119;</button>
+								<button class="" type="button" id="set-shortcut">&#9998;</button>
+							</label>
+							<!--input name="shorcut" type="text" id="shortcut-display" value="CTRL + /" readonly-->
+							<div id="shortcut-display"></div>
+						</div>
+					</div>
+					<div class="formgroup">
+						<input id="stopwatch-overlay"name="stopwatch" type="checkbox">
+						<label for ="stopwatch">StopWatch Overlay</label>
+					</div>
+					<div class="formgroup">
+						<input id="dark-mode"name="darkM-mode" type="checkbox">
+						<label for ="darkMode">Enable DarkMode</label>
+					</div>
+					<h2>Sorting</h2>
+					<div class="formgroup">
+						<input id="sort-pay" name="sort-pay" type="checkbox">
+						<label for="sort-pay">Projects By Pay Rate</label>
+					</div>
+					<div class="formgroup">
+						<input id="swap-table-positions" name="swap-table-positions" type="checkbox">
+						<label for="swap-table-positions">Swap Proj/Qual Tables</label>
+					</div>
+					<div class="formgroup">
+						<input id="sort-qualifications" name="sort-qualifications" type="checkbox">
+						<label for="sort-qualifications">Qualifications by Newest</label>
+					</div>
+					
+				</form>
+			</div>
+			<div class="inner-container">
+				<h2>Highlighting Rules</h2>
+				<table id="rules-table">
+					<tr>
+						<th>Match Phrase (Regex)</th>
+						<th>Edit</th>
+						<th>Delete</th>
+					</tr>
+				</table>
+				<div class="flex">
+					<button class="button" id="add-rule-button">Add Rule</button>
+					<button class="button button-success" id="save-rules-button">Save Rules</button>
+				</div>
+				<div id="rule-backdrop" class="hidden">
+					<div class="blockout"></div>
+					<div class="shade"></div>
+				</div>
+				<div id="rule-styles-modal" class="hidden">
+					<h2>Rule Styling</h2>
+				</div>
+			</div>
+		</div>
+		<script src="../scripts/util.js"></script>
+		<script src="../classes/Stopwatch.js"></script>
+		<script src="../classes/HighlightRuleSet.js"></script>
+		<script src="../classes/HighlightRulesController.js"></script>
+		<script src="../classes/ImageConcatinator.js"></script>
+		<script src="../scripts/Storage.js"></script>
+		<script src="../scripts/popup.js"></script>
+	</body>
+</html>
