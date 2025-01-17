@@ -1,0 +1,84 @@
+{
+    "manifest_version": 3,
+    "name": "DAT Extension",
+    "version": "1.2.1",
+    "description": "Skip tasks and copy response code easier. Automatically sort projects by pay, and qualifications by recent.",
+    "permissions": [
+      "activeTab",
+      "storage",
+      "downloads"
+    ],
+    "action": {
+      "default_popup": "./popup/popup.html",
+      "default_icon": {
+        "16": "./Images/icon-16.png",
+        "24": "./Images/icon-24.png",
+        "32": "./Images/icon-32.png",
+        "48": "./Images/icon-48.png",
+        "64": "./Images/icon-64.png",
+        "96": "./Images/icon-96.png",
+        "128": "./Images/icon-128.png",
+        "256": "./Images/icon-256.png",
+        "512": "./Images/icon-512.png",
+        "1024": "./Images/icon-1024.png"
+      }
+    },
+    "background": {
+      "service_worker": "./service-worker.js"
+    },
+    "content_scripts": [
+      {
+        "matches": [ "https://app.dataannotation.tech/*" ],
+        "js": [ "./scripts/darkMode.js" ],
+        "css": [ "./styles/global.css" ],
+        "run_at": "document_start"
+      },
+      {
+        "matches": [ "https://app.dataannotation.tech/*" ],
+        "js": [
+          "./scripts/util.js",
+          "./classes/Stopwatch.js",
+          "./scripts/stopWatchOverlay.js"
+        ]
+      },
+      {
+        "matches": [ "https://app.dataannotation.tech/workers/tasks/*" ],
+        "js": [
+          "./classes/TaskSkipper.js",
+          "./scripts/codeCopy.js",
+          "./scripts/tasks.js",
+          "./scripts/test.js"
+        ]
+      },
+      {
+        "matches": [ "https://app.dataannotation.tech/workers/projects" ],
+        "js": [
+          "./classes/HighlightRuleSet.js",
+          "./classes/HighlightRulesController.js",
+          "./classes/ProjectsPageTablePositionController.js",
+          "./classes/ProjectHighlighter.js",
+          "./scripts/descendingFilter.js",
+          "./scripts/projects.js"
+        ]
+      }
+    ],
+    
+    "externally_connectable": {
+      "ids": ["*"],
+      "matches": ["https://app.dataannotation.tech/*"]
+    },
+    "web_accessible_resources": [
+      {
+        "matches": [ "https://app.dataannotation.tech/*" ],
+        "resources": [ "styles/dark-mode.css"],
+        "use_dynamic_url": true
+      },
+      {
+        "matches": [ "https://*.dataannotation.tech/*" ],
+        "resources": [ "classes/TaskTracker.js" ],
+        "use_dynamic_url": false
+      }
+      
+    ]
+  }
+  
