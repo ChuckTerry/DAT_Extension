@@ -1,8 +1,18 @@
 /**
- * Handles the concatenation of multiple images into a single image.
- * Used in the extension's popup.
+ * The ImageConcatinator class provides functionality to handle image uploads,
+ * display them as thumbnails, and concatenate them into a single image on a canvas.
+ * It offers methods to remove individual images, download the resulting concatenated image,
+ * and manage its internal state based on user interactions.
  */
 class ImageConcatinator {
+    
+    /**
+     * @property {Image[]} selectedImages - Array holding the currently selected images.
+     * @property {HTMLInputElement} fileInput - Reference to the file input element.
+     * @property {HTMLButtonElement} concatenateButton - Reference to the button that triggers image concatenation.
+     * @property {HTMLDivElement} imageContainer - Container where image thumbnails are displayed.
+     * @property {HTMLCanvasElement} canvas - Canvas element used to combine selected images.
+     */
     constructor() {
         this.selectedImages = [];
         this.fileInput = document.querySelector('#image-input');

@@ -1,5 +1,5 @@
 /**
- * Manages a stopwatch that can be started, paused, and reset.
+ * Handles the logic and resulting state of the task timer.  Ensures consistency across pages and contexts and storage of proper time.
  */
 class Stopwatch {
     constructor() {
