@@ -45,17 +45,17 @@ function removeNoBreakSpace(string) {
 function javaCharacterHash(string = '') {
     let hashValue = 0;
     const length = string.length;
-	for (let index = 0; index < length; index++) {
-		const charCode = string.charCodeAt(index);
-		hashValue = (hashValue << 5) - hashValue + charCode;
+    for (let index = 0; index < length; index++) {
+        const charCode = string.charCodeAt(index);
+        hashValue = (hashValue << 5) - hashValue + charCode;
         hashValue |= 0;
-	}
+    }
     const digits = Math.abs(hashValue).toString();
     let hash = '';
     for (let index = 0; index < digits.length; index++) {
-      hash += 'abcdefghij'[digits.charCodeAt(index) - 48];
+        hash += 'abcdefghij'[digits.charCodeAt(index) - 48];
     }
-	return hash;
+    return hash;
 }
 
 /**
@@ -69,3 +69,22 @@ function removeAllChildren(element) {
     }
     return element;
 }
+
+/**
+ * Finds all elements containing a specific string with optional selector to narrow down element type.
+ * @param {string} text The string to search for
+ * @param {string} [type] Selector to limit the scope of elements searched
+ * @returns {Array} Array of elements with textContent containing text
+ */
+function getElementsByText(text, type = '*') {
+    const allElements = document.querySelectorAll(type);
+    const elementCount = allElements.length;
+    const elementsWithText = [];
+    for (let index = 0; index < elementCount; index++) {
+        const element = elementsWithText[index];
+        if (element.textContent.includes(text)) {
+            elementsWithText.push(element);
+        }
+    }
+    return elementsWithText;
+} 
