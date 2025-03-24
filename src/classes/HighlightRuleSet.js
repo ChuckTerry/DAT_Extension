@@ -11,6 +11,36 @@ class HighlightRuleSet {
         this.modal.appendChild(this.table);
     }
 
+    addRuleRow(property = '', value = '') {
+        if (this.ruleMap.has(property)) {
+            return this.ruleMap.get(property);
+        }
+        const row = this.table.tBodies[0].insertRow();
+        const propertyCell = row.insertCell();
+        const propertyElement = document.createElement('input');
+        propertyElement.type = 'text';
+        propertyElement.value = property;
+        propertyCell.appendChild(propertyElement);
+
+        const valueCell = row.insertCell();
+        const valueElement = document.createElement('input');
+        valueElement.type = 'text';
+        valueElement.value = value;
+        valueCell.appendChild(valueElement);
+
+        const removeCell = row.insertCell();
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('button', 'button-warning');
+        removeButton.innerText = '\u2716'; // ✖
+        removeButton.addEventListener('click', () => {
+            row.remove();
+            this.ruleMap.delete(property);
+        });
+        removeCell.appendChild(removeButton);
+        return row;
+    }
+
     buildStyleTable() {
         const table = document.createElement('table');
         table.classList.add('hidden');
@@ -63,54 +93,6 @@ class HighlightRuleSet {
         this.table = table;
     }
 
-    addRuleRow(property = '', value = '') {
-        if (this.ruleMap.has(property)) {
-            return this.ruleMap.get(property);
-        }
-        const row = this.table.tBodies[0].insertRow();
-        const propertyCell = row.insertCell();
-        const propertyElement = document.createElement('input');
-        propertyElement.type = 'text';
-        propertyElement.value = property;
-        propertyCell.appendChild(propertyElement);
-
-        const valueCell = row.insertCell();
-        const valueElement = document.createElement('input');
-        valueElement.type = 'text';
-        valueElement.value = value;
-        valueCell.appendChild(valueElement);
-
-        const removeCell = row.insertCell();
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.classList.add('button', 'button-warning');
-        removeButton.innerText = '\u2716'; // ✖
-        removeButton.addEventListener('click', () => {
-            row.remove();
-            this.ruleMap.delete(property);
-        });
-        removeCell.appendChild(removeButton);
-        return row;
-    }
-
-    parseRules() {
-        const { rules, table } = this;
-        const ruleCount = rules.length;
-        for (let index = 0; index < ruleCount; index++) {
-            const [property, value] = rules[index];
-            if (isValidCSSRule(property, value)) {
-                this.addRuleRow(property, value);
-            }
-        }
-    }
-
-    edit() {
-        this.backdrop.classList.remove('hidden');
-        this.modal.classList.remove('hidden');
-        this.table.classList.remove('hidden');
-        this.baseStyles = this.getStyleArray();
-    }
-
     cancelEdits() {
         const rows = Array.from(this.table.tBodies[0].rows);
         const rowCount = rows.length;
@@ -125,30 +107,11 @@ class HighlightRuleSet {
         this.parseRules();
     }
 
-    toggleEdit() {
-        this.backdrop.classList.toggle('hidden');
-        this.modal.classList.toggle('hidden');
-        this.table.classList.toggle('hidden');
-    }
-
-    saveEdits() {
-        this.backdrop.classList.add('hidden');
-        this.modal.classList.add('hidden');
-        this.table.classList.add('hidden');
-        this.controller.saveRules();
-    }
-
-    toJSON() {
-        const { regex } = this;
-        const rows = this.table.tBodies[0].rows;
-        const styles = [];
-        for (let index = 0; index < rows.length; index++) {
-            const row = rows[index];
-            const property = row.cells[0].firstChild.value;
-            const value = row.cells[1].firstChild.value;
-            styles.push([property, value]);
-        }
-        return { regex, styles };
+    edit() {
+        this.backdrop.classList.remove('hidden');
+        this.modal.classList.remove('hidden');
+        this.table.classList.remove('hidden');
+        this.baseStyles = this.getStyleArray();
     }
 
     getStyleArray() {
@@ -163,9 +126,46 @@ class HighlightRuleSet {
         return styles;
     }
 
+    parseRules() {
+        const { rules, table } = this;
+        const ruleCount = rules.length;
+        for (let index = 0; index < ruleCount; index++) {
+            const [property, value] = rules[index];
+            if (isValidCSSRule(property, value)) {
+                this.addRuleRow(property, value);
+            }
+        }
+    }
+
+    saveEdits() {
+        this.backdrop.classList.add('hidden');
+        this.modal.classList.add('hidden');
+        this.table.classList.add('hidden');
+        this.controller.saveRules();
+    }
+
     saveRules() {
         this.rules = this.toJSON();
         this.controller.saveRules();
+    }
+
+    toggleEdit() {
+        this.backdrop.classList.toggle('hidden');
+        this.modal.classList.toggle('hidden');
+        this.table.classList.toggle('hidden');
+    }
+
+    toJSON() {
+        const { regex } = this;
+        const rows = this.table.tBodies[0].rows;
+        const styles = [];
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index];
+            const property = row.cells[0].firstChild.value;
+            const value = row.cells[1].firstChild.value;
+            styles.push([property, value]);
+        }
+        return { regex, styles };
     }
 
     updateRule(property, value) {
