@@ -82,7 +82,8 @@ function getElementsByText(text, type = '*') {
     const elementsWithText = [];
     for (let index = 0; index < elementCount; index++) {
         const element = allElements[index];
-        if (element?.textContent?.includes(text)) {
+        const propertyTarget = element.tagName === 'INPUT' ? 'value' : 'textContent';
+        if (element?.[propertyTarget]?.includes(text)) {
             elementsWithText.push(element);
         }
     }
