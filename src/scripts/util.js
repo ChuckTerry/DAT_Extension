@@ -81,7 +81,7 @@ function getElementsByText(text, type = '*') {
     const elementCount = allElements.length;
     const elementsWithText = [];
     for (let index = 0; index < elementCount; index++) {
-        const element = elementsWithText[index];
+        const element = allElements[index];
         if (element.textContent.includes(text)) {
             elementsWithText.push(element);
         }
