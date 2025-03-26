@@ -1,0 +1,51 @@
+.mimic-button {
+    -webkit-appearance: button;
+    -webkit-user-select: none;
+    appearance: button;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+    vertical-align: middle;
+
+    &.enter-work-mode {
+        background-color: #28A745;
+        border: 1px solid #28A745;
+        color: #FFFFFF;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        margin-top: 20px;
+        margin-bottom: 15px;
+        padding: 0.375rem 0.75rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+        &:hover {
+            background-color: #1E7E34;
+            border-color: #1C7430;
+            text-decoration: none;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+        }
+    }
+
+    &.exit-work-mode {
+        background-color: #ECECEC;
+        color: #212529;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        margin-left: 10px;
+        padding: 0.375rem 0.75rem;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &:focus {
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem #005DCC40;
+    }
+}
