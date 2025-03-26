@@ -34,7 +34,7 @@ export class TaskTracker {
     }
 
     constructor() {
-        chrome.storage.sync.get(['taskHistory'], (result) => {
+        chrome.storage.local.get(['taskHistory'], (result) => {
             this.taskHistory = result.taskHistory || [];
             this.loadTime = Date.now();
             this.promptId = this.getPromptId();
@@ -62,7 +62,7 @@ export class TaskTracker {
 
         riggedButton.addEventListener('click', () => {
             this.taskHistory.push(this.toObject('Entered Work Mode'));
-            chrome.storage.sync.set({ taskHistory: this.taskHistory })
+            chrome.storage.local.set({ taskHistory: this.taskHistory })
               .then(() => {
                 riggedButton.type = 'hidden';
                 originalButton.type = 'submit';
@@ -232,7 +232,7 @@ export class TaskTracker {
 
     save(reason) {
         this.taskHistory.push(this.toObject(reason));
-        chrome.storage.sync.set({ taskHistory: this.taskHistory });
+        chrome.storage.local.set({ taskHistory: this.taskHistory });
     }
     
 }
