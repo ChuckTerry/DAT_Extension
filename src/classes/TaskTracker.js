@@ -1,17 +1,6 @@
 export class TaskTracker {
 
     static #attachTaskPageListeners() {
-        
-        /* Enter Work Mode Button */
-        const enterWorkModeButton = document.querySelector('#enterWorkModeButton');
-        const enterWorkModeButtonForm = document.querySelector('#enterWorkModeButton');
-        if (enterWorkModeButton && enterWorkModeButtonForm) {
-            enterWorkModeButtonForm.addEventListener('click', (event) => {
-                if (event.target === enterWorkModeButton) {
-                    this.save('Entered Work Mode');
-                }
-            }, true);
-        }
          /* Submit Task Button */
          const submitButton = document.querySelector('.task-response-submission button[type=submit]');
          const submitButtonUpstreamElement = submitButton?.parentElement?.parentElement;
@@ -47,11 +36,39 @@ export class TaskTracker {
     constructor() {
         chrome.storage.sync.get(['taskHistory'], (result) => {
             this.taskHistory = result.taskHistory || [];
+            this.loadTime = Date.now();
+            this.promptId = this.getPromptId();
+            this.projectName = this.getProject();
+            this.taskResponseId = this.getTaskResponseId();
+            this.modelNames = this.getModelNames();
+            this.prompt = this.getPrompt();
+            this.save('testing');
         });
-        this.loadTime = Date.now();
-        this.promptId = this.getPromptId();
-        this.projectName = this.getProject();
-        this.taskResponseId = this.getTaskResponseId();
+        this.rigEnterWorkModeButton();
+    }
+
+    rigEnterWorkModeButton() {
+        const originalButton = document.querySelector('#enterWorkModeButton');
+        if (originalButton === null) {
+            return;
+        }
+        const riggedButton = document.createElement('input');
+        riggedButton.classList.add('mimic-button', 'enter-work-mode');
+        riggedButton.id = 'mimic-button-enter-work-mode';
+        riggedButton.type = 'button';
+        riggedButton.value = 'Enter Work Mode';
+        originalButton.type = 'hidden';
+        originalButton.parentElement.append(riggedButton);
+
+        riggedButton.addEventListener('click', () => {
+            this.taskHistory.push(this.toObject('Entered Work Mode'));
+            chrome.storage.sync.set({ taskHistory: this.taskHistory })
+              .then(() => {
+                riggedButton.type = 'hidden';
+                originalButton.type = 'submit';
+                originalButton.click();
+              });
+        });
     }
 
     attachListeners() {
@@ -97,9 +114,99 @@ export class TaskTracker {
         }
     }
 
+    /** @todo Extract logic to reduce arrays over length 2 */
+    getModelNames() {
+        const strongHeaderNameArray = [...document.querySelectorAll('table > tbody > tr > th > h3 > strong > span')];
+        if (strongHeaderNameArray.length > 1) {
+            const array = strongHeaderNameArray.map((element) => element.innerText);
+            const length = array.length;
+            if (length === 2) {
+                return array;
+            } else {
+                const uniqueStrings = new Set();
+                for (let index = 0; index < length; index++) {
+                    const currentString = array[index];
+                    if (currentString?.trim() !== '') {
+                        uniqueStrings.add(currentString);
+                    }
+                }
+                const uniqueArray = Array.from(uniqueStrings);
+                if (uniqueArray.length === 2) {
+                    return uniqueArray;
+                }
+            }
+        }
+        const standardResponseNameArray = [...document.querySelectorAll('table > tbody > tr > th > p > span')];
+        if (standardResponseNameArray.length > 1) {
+            const array = standardResponseNameArray.map((element) => element.innerText);
+            const length = array.length;
+            if (length === 2) {
+                return array;
+            } else {
+                const uniqueStrings = new Set();
+                for (let index = 0; index < length; index++) {
+                    const currentString = array[index];
+                    if (currentString?.trim() !== '') {
+                        uniqueStrings.add(currentString);
+                    }
+                }
+                const uniqueArray = Array.from(uniqueStrings);
+                if (uniqueArray.length === 2) {
+                    return uniqueArray;
+                }
+            }
+        }
+        return ['Unknown', 'Unknown'];
+    }
+
     getProject() {
         const breadcrumbElement = document.querySelector('div.worker-task > ol > li.breadcrumb-item.active');
         return breadcrumbElement?.innerText || 'Unknown';
+    }
+
+    getPrompt() {
+        const array = [...getElementsByText('Prompt', 'table', false)];
+        const possiblePrompts = [];
+        const length = array.length;
+        for (let index = 0; index < length; index++) {
+            const element = array[index];
+            const pElements = [...element.querySelectorAll('p')];
+            for (let pIndex = 0; pIndex < length; pIndex++) {
+                const pElement = pElements[pIndex];
+                possiblePrompts.push(pElement.innerText);
+            }
+        }
+        if (possiblePrompts.length === 1) {
+            return possiblePrompts[0];
+        } else if (possiblePrompts.length === 0) {
+            console.debug('TaskTracker unable to locate prompt');
+            return 'Unknown';
+        } else {
+            console.debug('TaskTracker found multiple possible prompts:');
+            for (let index = 0; index < length; index++) {
+                const prompt = possiblePrompts[index];
+                console.debug (`Prompt ${index + 1}: ${prompt}`);
+            }
+            console.debug('TaskTracker will default to the first prompt.');
+            return possiblePrompts[0];
+        }
+    }
+
+    getPromptId() {
+        const selectorA = document.querySelector('[data-testid=fields-text] > div > h3 + p ')?.childNodes;
+        if (selectorA  && selectorA.length === 3 && selectorA[0].tagName === 'EM') {
+            return selectorA[1].textContent;
+        }
+        const selectorB = document.querySelector('[data-testid=fields-text] > div > p:first-of-type ');
+        if (selectorB && selectorB.innerText.startsWith('Prompt ID: ')) {
+            return selectorB.innerText.split('Prompt ID: ')[1];
+        }
+
+        const selectorC = document.querySelector('[data-testid=fields-text] > div > p:nth-of-type(2) ');
+        if (selectorC?.firstElementChild?.innerText.startsWith('Task ID: ')) {
+            return selectorC.innerText.split('Task ID: ')[1];
+        }
+        return 'Unknown';
     }
 
     getTaskResponseId() {
@@ -111,20 +218,13 @@ export class TaskTracker {
         return 'Unknown';
     }
 
-    getPromptId() {
-        const selectorA = document.querySelector('[data-testid=fields-text] > div > h3 + p ')?.childNodes;
-        if (selectorA  && selectorA.length === 3 && selectorA[0].tagName === 'EM') {
-            return selectorA[1].textContent;
-        }
-        return 'Unknown';
-    }
-
     toObject(outcome = 'Unknown') {
         return {
             loadTime: this.loadTime,
-            endTime: Date.now(),
             projectName: this.projectName,
             taskResponseId: this.taskResponseId,
+            modelNames: this.modelNames,
+            prompt: this.prompt,
             promptId: this.promptId,
             outcome: outcome
         };
@@ -135,4 +235,105 @@ export class TaskTracker {
         chrome.storage.sync.set({ taskHistory: this.taskHistory });
     }
     
+}
+
+function getElementsByText(text, type = '*', caseSensitive = true) {
+    if (!caseSensitive) {
+        text = text.toUpperCase();
+    }
+    const allElements = document.querySelectorAll(type);
+    const elementCount = allElements.length;
+    const elementsWithText = [];
+    for (let index = 0; index < elementCount; index++) {
+        const element = allElements[index];
+        const string = !caseSensitive ? element.textContent.toUpperCase() : element.textContent;
+        if (string.includes(text)) {
+            elementsWithText.push(element);
+        }
+    }
+    return elementsWithText;
+}
+
+function getModelNames() {
+	const strongHeaderNameArray = [...document.querySelectorAll('table > tbody > tr > th > h3 > strong > span')];
+	if (strongHeaderNameArray.length === 2) {
+		return strongHeaderNameArray.map((element) => element.innerText);
+	}
+	const standardResponseNameArray = [...document.querySelectorAll('table > tbody > tr > th > p > span')];
+	if (standardResponseNameArray.length === 2) {
+		return standardResponseNameArray.map((element) => element.innerText);
+	}
+	return ['Unknown', 'Unknown']
+}
+
+function getTaskDataFromPage() {
+    const [modelNameA, modelNameB] = getModelNames();
+    const [responseA, responseB] = [...document.querySelectorAll('.rendered-markdown')].map(element => element.innerText)
+    const taskQuestions = [];
+    const questions = [...document.querySelectorAll('[id^=question')];
+    const questionCount = questions.length;
+    for (let questionIndex = 0; questionIndex < questionCount; questionIndex++) {
+    	const [questionElement, answerElement] = [...questions[questionIndex].firstChild.children];
+        const questionText = questionElement.innerText;
+    	const radios = [...answerElement.querySelectorAll('[type=radio]')];
+        const radioCount = radios.length;
+    	if (radioCount > 0) {
+    		const radioAnswer = [];
+    		for (let radioIndex = 0; radioIndex < radioCount; radioIndex++) {
+    			const radio = radios[radioIndex];
+    			if (radio.checked) {
+    				const answerText = radio.parentElement.innerText;
+    				radioAnswer.push(answerText);
+    			}
+    		}
+    		if (radioAnswer.length > 0) {
+    			taskQuestions.push([questionText, radioAnswer.join(' <AND> ')]);
+    			continue;
+    		}
+    	}
+    	const checkboxes = [...answerElement.querySelectorAll('[type=checkbox]')];
+        const checkCount = checkboxes.length;
+    	if (checkCount > 0) {
+    		const checkAnswer = [];
+    		for (let checkIndex = 0; checkIndex < checkCount; checkIndex++) {
+    			const checkbox = checkboxes[checkIndex];
+    			if (checkbox.checked) {
+    				const answerText = checkbox.parentElement.innerText;
+    				checkAnswer.push(answerText);
+    			}
+    		}
+    		if (checkAnswer.length > 0) {
+    			taskQuestions.push([questionText, checkAnswer.join(' <AND> ')]);
+    			continue;
+    		}
+    	}
+        const text = answerElement.querySelector('textarea');
+		if (text) {
+			taskQuestions.push([questionText, text?.value ?? '']);
+			continue;
+		}
+		if (radioCount > 0 && checkCount === 0) {
+			taskQuestions.push([questionText, 'NO ANSWER SELECTED']);
+		} else if (radioCount === 0 && checkCount > 0) {
+			taskQuestions.push([questionText, 'NO BOXES CHECKED']);
+		} else if (radioCount > 0 && checkCount > 0) {
+			// Multi-Modal
+			taskQuestions.push([questionText, 'UNANSWERED']);
+		} else if (radioCount === 0 && checkCount === 0) {
+			// This could be a file upload
+			taskQuestions.push([questionText, 'UNSUPPORTED ANSWER TYPE']);
+		} 
+    }
+    
+    return {
+		modelA: {
+			name: modelNameA,
+			response: responseA
+		},
+		modelB: {
+			name: modelNameB,
+			response: responseB
+		},
+		questions: taskQuestions
+	};
 }
