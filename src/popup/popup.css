@@ -15,6 +15,16 @@
     border-radius:20px;
 } */
 
+div.history-icon-wrapper {
+    margin-top: 30px;
+    float: right;
+    margin-right: 14px;
+    cursor: pointer;
+    border-radius:3px;
+    line-height: 1.5;
+    width: 24px;
+}
+
 h2 {
     margin-bottom: 0.4rem;
 }
@@ -25,6 +35,11 @@ input {
 
 label {
     font-size: 1.2em;
+}
+
+#history-list {
+    width: 800px;
+    max-height: 500px;
 }
 
 .container {
