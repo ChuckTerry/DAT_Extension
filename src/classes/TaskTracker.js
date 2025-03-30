@@ -1,50 +1,41 @@
 export class TaskTracker {
 
     static #attachTaskPageListeners() {
-         /* Submit Task Button */
-         const submitButton = document.querySelector('.task-response-submission button[type=submit]');
-         const submitButtonUpstreamElement = submitButton?.parentElement?.parentElement;
-         if (submitButton && submitButtonUpstreamElement) {
-            submitButtonUpstreamElement.addEventListener('click', (event) => {
-                if (event.target === submitButton) {
-                    this.save('Task Submitted');
-                }
-            }, true);
-         }
-         /* Skip Button */
-         const skipButton = document.querySelector('#skip_button');
-         const skipForm = skipButton?.parentElement;
-         if (skipButton && skipForm) {
-            skipForm.addEventListener('click', (event) => {
-                if (event.target === skipButton) {
-                    this.save('Skipped');
-                }
-            }, true);
-         }
-         /* Exit Work Mode Button */
-         const exitWorkModeButton = document.querySelector('input[value="Exit Work Mode"]');
-         const exitWorkModeButtonForm = exitWorkModeButton?.parentElement;
-         if (exitWorkModeButton && exitWorkModeButtonForm) {
-            exitWorkModeButtonForm.addEventListener('click', (event) => {
-                if (event.target === exitWorkModeButton) {
-                    this.save('Task Submitted');
-                }
-            }, true);
-         }
+        /* Submit Task Button */
+        const submitButton = document.querySelector('.task-response-submission button[type=submit]');
+        const submitButtonUpstreamElement = submitButton?.parentElement?.parentElement;
+        if (submitButton && submitButtonUpstreamElement) {
+           submitButtonUpstreamElement.addEventListener('click', (event) => {
+               if (event.target === submitButton) {
+                   this.save('Task Submitted');
+               }
+           }, true);
+        }
+        /* Skip Button */
+        const skipButton = document.querySelector('#skip_button');
+        const skipForm = skipButton?.parentElement;
+        if (skipButton && skipForm) {
+           skipForm.addEventListener('click', (event) => {
+               if (event.target === skipButton) {
+                   this.save('Skipped');
+               }
+           }, true);
+        }
     }
 
     constructor() {
         chrome.storage.local.get(['taskHistory'], (result) => {
             this.taskHistory = result.taskHistory || [];
-            this.loadTime = Date.now();
-            this.promptId = this.getPromptId();
-            this.projectName = this.getProject();
-            this.taskResponseId = this.getTaskResponseId();
-            this.modelNames = this.getModelNames();
-            this.prompt = this.getPrompt();
-            this.save('testing');
         });
+        this.loadTime = Date.now();
+        this.promptId = this.getPromptId();
+        this.projectName = this.getProject();
+        this.taskResponseId = this.getTaskResponseId();
+        this.modelNames = this.getModelNames();
+        this.prompt = this.getPrompt();
         this.rigEnterWorkModeButton();
+        this.rigExitWorkModeButton();
+        this.rigTopNavBar();
     }
 
     rigEnterWorkModeButton() {
@@ -63,12 +54,83 @@ export class TaskTracker {
         riggedButton.addEventListener('click', () => {
             this.taskHistory.push(this.toObject('Entered Work Mode'));
             chrome.storage.local.set({ taskHistory: this.taskHistory })
-              .then(() => {
-                riggedButton.type = 'hidden';
-                originalButton.type = 'submit';
-                originalButton.click();
-              });
+                .then(() => {
+                    riggedButton.type = 'hidden';
+                    originalButton.type = 'submit';
+                    originalButton.click();
+                });
         });
+    }
+
+    rigExitWorkModeButton() {
+        const originalButton = document.querySelector('[value="Exit Work Mode"]');
+        if (originalButton === null) {
+            return;
+        }
+        const riggedButton = document.createElement('input');
+        riggedButton.classList.add('mimic-button', 'exit-work-mode');
+        riggedButton.id = 'mimic-button-exit-work-mode';
+        riggedButton.type = 'button';
+        riggedButton.value = 'Exit Work Mode';
+        originalButton.type = 'hidden';
+        originalButton.parentElement.append(riggedButton);
+
+        riggedButton.addEventListener('click', () => {
+            this.taskHistory.push(this.toObject('Exited Work Mode'));
+            chrome.storage.local.set({ taskHistory: this.taskHistory })
+                .then(() => {
+                    riggedButton.type = 'hidden';
+                    originalButton.type = 'submit';
+                    originalButton.click();
+                });
+        });
+    }
+
+    rigTopNavBar() {
+        const workOnProjects = document.querySelector('a[href="/workers/projects"]');
+        if (workOnProjects) {
+            workOnProjects.href = 'javascript:void(0)';
+            workOnProjects.addEventListener('click', () => {
+                this.taskHistory.push(this.toObject('NavBar: Work on Projects'));
+                chrome.storage.local.set({ taskHistory: this.taskHistory })
+                    .then(() => {
+                        window.location.href = '/workers/projects';
+                    });
+            });
+        }
+        const transferFunds = document.querySelector('a[href="/workers/payments"]');
+        if (transferFunds) {
+            transferFunds.href = 'javascript:void(0)';
+            transferFunds.addEventListener('click', () => {
+                this.taskHistory.push(this.toObject('NavBar: Transfer Funds'));
+                chrome.storage.local.set({ taskHistory: this.taskHistory })
+                    .then(() => {
+                        window.location.href = '/workers/payments';
+                    });
+            });
+        }
+        const referrals = document.querySelector('a[href="/workers/referrals"]');
+        if (referrals) {
+            referrals.href = 'javascript:void(0)';
+            referrals.addEventListener('click', () => {
+                this.taskHistory.push(this.toObject('NavBar: Referrals'));
+                chrome.storage.local.set({ taskHistory: this.taskHistory })
+                    .then(() => {
+                        window.location.href = '/workers/referrals';
+                    });
+            });
+        }
+        const inbox = document.querySelector('a[href="/workers/inbox"]');
+        if (inbox) {
+            inbox.href = 'javascript:void(0)';
+            inbox.addEventListener('click', () => {
+                this.taskHistory.push(this.toObject('NavBar: Inbox'));
+                chrome.storage.local.set({ taskHistory: this.taskHistory })
+                    .then(() => {
+                        window.location.href = '/workers/inbox';
+                    });
+            });
+        }
     }
 
     attachListeners() {
@@ -78,8 +140,8 @@ export class TaskTracker {
         /* Links in the Footer */
         const footerLinks = document.querySelectorAll('.footer > div > p > a');
         const footerLinkCount = footerLinks.length;
-        for (let indexc = 0; indexc < footerLinkCount; indexc++) {
-            const footerLink = footerLinks[indexc];
+        for (let index = 0; index < footerLinkCount; index++) {
+            const footerLink = footerLinks[index];
             const linkText = footerLink.innerText;
             footerLink.addEventListener('click', () => {
                 this.save(`Navigation via Footer Link "${linkText}"`);
