@@ -32,7 +32,10 @@
       {
         "matches": [ "https://app.dataannotation.tech/*" ],
         "js": [ "./scripts/darkMode.js" ],
-        "css": [ "./styles/global.css" ],
+        "css": [
+          "./styles/global.css",
+          "./styles/mimic.css"
+        ],
         "run_at": "document_start"
       },
       {
