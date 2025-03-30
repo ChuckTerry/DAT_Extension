@@ -1,24 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="UTF-8">
 		<title>Extension Preferences</title>
 		<link rel="stylesheet" href="popup.css">
 		<link rel="stylesheet" href="../styles/global.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
 		<div class="container">
-			<button id="move">Rules</button>
+			<button type="button" id="move">Rules</button>
 			<div class="inner-container">
+				<div class="history-icon-wrapper" title="View Stopwatch History">
+					<?xml version="1.0" encoding="UTF-8"?>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 476 476">
+						<defs><style>
+						  #history-clock-icon {
+						    .background { fill: #FFFFFF; }
+						    .hands { fill: #4D4D4D; }
+						    .marker { fill: #808080; }
+						    .radial-arrow { fill: #1A1A1A; }
+						  }
+						  .dark-mode { #history-clock-icon {
+						    .background { fill: #030307; }
+						    .hands { fill: #EDEDED; }
+						    .marker { fill: #CCCCCC; }
+						    .radial-arrow { fill: #FEFEFE; }
+						  } }
+						</style></defs>
+						<g id="history-clock-icon">
+							<path class="background" d="M432.59,100.51l26.67-27.38c4.67-4.79,6.35-11.74,4.4-18.14-1.95-6.4-7.23-11.22-13.78-12.59,0,0-150.51-34.51-168.62-37.84-19.33-3.55-38.89-5.35-58.55-4.22-2.32.13-10,.52-10.82.59-57.84,5.26-111.42,32.44-150.85,76.53C21.68,121.46,0,178.3,0,237.5c0,63.57,24.76,123.34,69.71,168.29,44.95,44.95,104.72,69.71,168.29,69.71s123.34-24.76,168.29-69.71,69.71-104.72,69.71-168.29c0-48.88-15.35-97.1-43.41-137Z" />
+							<path class="marker" d="M225,417.81c0-10.11,5.6-18.3,12.5-18.3,6.9,0,12.5,8.19,12.5,18.3,0,10.11-5.6,18.3-12.5,18.3-6.9,0-12.5-8.19-12.5-18.3Z" />
+							<ellipse class="marker" cx="148.1" cy="393.85" rx="18.3" ry="12.5" transform="translate(-267.04 325.18) rotate(-60)" />
+							<ellipse class="marker" cx="82.65" cy="328.4" rx="18.3" ry="12.5" transform="translate(-153.13 85.32) rotate(-30)" />
+							<ellipse class="marker" cx="58.7" cy="239" rx="18.3" ry="12.5" />
+							<ellipse class="marker" cx="82.65" cy="149.6" rx="12.5" ry="18.3" transform="translate(-88.23 146.38) rotate(-60)" />
+							<ellipse class="marker" cx="148.1" cy="84.15" rx="12.5" ry="18.3" transform="translate(-22.24 85.32) rotate(-30)" />
+							<ellipse class="marker" cx="416.3" cy="239" rx="18.3" ry="12.5" />
+							<ellipse class="marker" cx="392.35" cy="328.4" rx="12.5" ry="18.3" transform="translate(-88.23 503.99) rotate(-60)" />
+							<ellipse class="marker" cx="326.9" cy="393.85" rx="12.5" ry="18.3" transform="translate(-153.13 216.22) rotate(-30)" />
+							<path class="hands" d="M358.03,168.35c-1.56-2.65-4.95-3.58-7.65-2.11l-101.96,55.64-5.4-176.51c-.08-2.71-2.3-4.86-5.01-4.86s-4.93,2.15-5.01,4.86l-5.77,188.08-20.27,15.75c-2.16,1.75-1.94,6.31.06,9.31.89,1.56,4.22,3.66,6.63,2.13l14.91-6.06c1.64,15.44,4,37.6,4,37.6.35,2.48,2.46,4.32,4.97,4.32h.99c2.5,0,4.62-1.84,4.97-4.32,0,0,4.05-37.67,5.21-48.69l107.47-67.41c2.62-1.64,3.45-5.07,1.88-7.74Z" />
+							<path class="radial-arrow" d="M415.57,100.35l34.38-35.3c2.93-3.01,1.39-8.07-2.73-8.93l-105.08-22c-3.82-.8-7.18,2.65-6.28,6.44l24.75,104.46c.97,4.09,6.07,5.5,9,2.49l32.58-33.44c10.34,13.61,18.94,28.44,25.62,44.25,10.74,25.39,16.18,52.36,16.18,80.18s-5.44,54.79-16.18,80.18c-10.38,24.53-25.23,46.56-44.15,65.49-18.92,18.92-40.96,33.78-65.48,44.15-25.39,10.74-52.36,16.18-80.18,16.18s-54.79-5.44-80.18-16.18c-24.53-10.38-46.56-25.23-65.48-44.15-18.92-18.92-33.78-40.96-44.15-65.49-10.74-25.39-16.18-52.36-16.18-80.18s5.44-54.79,16.18-80.18c10.37-24.53,25.23-46.56,44.15-65.48s40.96-33.78,65.48-44.15c19.41-8.21,38.57-13.22,56.97-14.89,6.65-.6,9.92-5.49,9.71-10-.2-4.34-3.57-8.74-9.66-8.97-.16,0-.33,0-.5,0-.41,0-2,.13-2.36.16-54.14,5.2-104.27,30.8-141.26,72.15C33.5,128.74,13,182.5,13,238.5c0,60.1,23.4,116.6,65.9,159.1,42.5,42.5,99,65.9,159.1,65.9s116.6-23.4,159.1-65.9,65.9-99,65.9-159.1c0-50.18-16.77-98.77-47.43-138.15Z" />
+						</g>
+					</svg>
+				</div>
 				<div class="timer">
 					<p id="display">00:00:00</p>
 					<div class="timer-control">
 						<button class="button button-lg button-success " id="toggle-button">Start</button>
 						<button class="button button-lg button-warning" id="reset-button">Reset</button>
 					</div>
+					<div class="hidden" id="history-list"></div>
 				</div>
 				<div class="image-concat">
 					<h2>Concatenate Images</h2>
-					<button class=" button image-button">
+					<button class="button image-button">
 						<svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path fill-rule="evenodd" clip-rule="evenodd" d="M6.205 3h11.59c1.114 0 1.519.116 1.926.334.407.218.727.538.945.945.218.407.334.811.334 
 							1.926v7.51l-4.391-4.053a1.5 1.5 0 0 0-2.265.27l-3.13 4.695-2.303-1.48a1.5 1.5 
@@ -27,7 +63,7 @@
 							0-1.519-.116-1.926-.334a2.305 2.305 0 0 1-.485-.345L8.2 15.067l2.346 1.508a1.5 1.5 0 0 0 2.059-.43l3.077-4.616zM7.988 6C6.878 6 6 6.832 6 7.988 
 							6 9.145 6.879 10 7.988 10 9.121 10 10 9.145 10 7.988 10 6.832 9.121 6 7.988 6z" fill="#FFFFFF"/>
 						</svg>
-						Upload Images
+						<label for="image-input">Upload Images</label>
 						<input class="file" type="file" name="image" id="image-input" multiple accept="image/*">
 					</button>
 					<div id="image-container"></div>
@@ -52,11 +88,11 @@
 					</div>
 					<div class="formgroup">
 						<input id="stopwatch-overlay"name="stopwatch" type="checkbox">
-						<label for ="stopwatch">StopWatch Overlay</label>
+						<label for="stopwatch-overlay">StopWatch Overlay</label>
 					</div>
 					<div class="formgroup">
 						<input id="dark-mode"name="darkM-mode" type="checkbox">
-						<label for ="darkMode">Enable DarkMode</label>
+						<label for="dark-mode">Enable DarkMode</label>
 					</div>
 					<h2>Sorting</h2>
 					<div class="formgroup">
